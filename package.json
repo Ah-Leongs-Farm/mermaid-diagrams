@@ -1,0 +1,13 @@
+{
+  "name": "mermaid-diagrams",
+  "version": "1.0.0",
+  "scripts": {
+    "gen": "./generate-diagram.sh"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@mermaid-js/mermaid-cli": "^11.4.2"
+  }
+}
