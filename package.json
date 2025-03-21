@@ -2,7 +2,7 @@
   "name": "mermaid-diagrams",
   "version": "1.0.0",
   "scripts": {
-    "gen": "./generate-diagram.sh"
+    "g": "./generate-diagram.sh"
   },
   "author": "",
   "license": "ISC",
