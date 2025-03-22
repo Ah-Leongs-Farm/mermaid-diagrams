@@ -1,0 +1,38 @@
+classDiagram
+    class TurnSystem {
+        incrementTurn(): Bool
+        getCurrentTurn(): Int
+        getMaxTurns(): Int
+        isGameOver(): Bool
+    }
+    
+    class TurnComponent {
+        maxTurns: Int
+        currentTurn: Int
+        growth: Float
+        advanceTurn()
+    }
+    
+    class GameState {
+        setUpComponents(maxTurns: Int, maxEnergy: Int)
+    }
+    
+    class EnergyComponent {
+        maxEnergy: Int
+        currentEnergy: Int
+        useEnergy(amount: Int): Bool
+        restoreEnergy(amount: Int): void
+    }
+    
+    class EnergySystem {
+        useEnergy(amount: Int): Bool
+        replenishEnergy(): void
+        increaseMaxEnergy(by amount: Int): void
+        getCurrentEnergy(): Int
+        getMaxEnergy(): Int
+    }
+
+    GameState "1" --> "1" TurnComponent : components
+    GameState "1" --> "1" EnergyComponent : components
+    TurnSystem -- TurnComponent : components
+    EnergySystem -- EnergyComponent : components
