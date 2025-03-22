@@ -1,4 +1,5 @@
-classDiagram 
+classDiagram
+    direction LR
     class QuestStatus {
         <<enum>>
         active
@@ -14,14 +15,25 @@ classDiagram
         init()
         setProgress(Float)
     }
+    
+    class QuestCriteria {
+        eventType: EventType
+        requiredData: [EventDataType: any Hashable]
+        progressCalculator: ProgressCalculator
+    }
 
     class Reward
 
     class RewardType {
         <<enum>>
-        xp(Int)
-        currency(CurrencyType, Int)
-        item(String, Int)
+        xp
+        currency
+        item
+    }
+    
+    class SpecificReward {
+        <<interface>>
+        +RewardType type
     }
 
     class QuestComponent {
@@ -42,10 +54,11 @@ classDiagram
         updateCurrenctQuestProgress(QuestObjective)
         moveToNextQuest()
     }
-
+    
+    QuestCriteria "1" -- "1" QuestObjective: criteria
     QuestObjective "*" -- "1" QuestComponent: objectives
-    QuestStatus "*" -- "1" QuestComponent: status
+    QuestStatus "1" -- "1" QuestComponent: status
     Reward "*" -- "1" QuestComponent: completionReward
-    QuestComponent "1" <-- "1" Quest : components
+    QuestComponent "1" <-- "1" Quest : component
     QuestComponent -- QuestSystem : components
-    RewardType "*" -- "1" Reward : rewards
+    SpecificRewards "*" -- "1" Reward : rewards
