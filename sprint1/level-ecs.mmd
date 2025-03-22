@@ -1,0 +1,26 @@
+classDiagram
+    class LevelComponent {
+        level: Int
+        currentXP: Float
+        thresholdXP: Float
+
+        init(Int, Float)
+        calculateXPThreshold(Int)
+        setLevel(Int, Float, Float)
+    }
+
+    class LevelSystem {
+        init()
+        addXP(Float)
+        getCurrentLevel() Int
+        getCurrentXP() Float
+        getXPForNextLevel() Float?
+        getXPPorgress Float
+    }
+
+    class Level {
+        init(Int, Float)
+    }
+
+    LevelComponent -- LevelSystem : components
+    LevelComponent "1" <-- "1" Level : components
