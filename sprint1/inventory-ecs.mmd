@@ -1,0 +1,32 @@
+classDiagram
+    class ItemType {
+        <<enum>>
+        bokChoyHarvested
+        bokChoySeed
+    }
+
+    class ItemComponent {
+        itemType: ItemType
+        stackable: Bool
+        quantity: Int
+        init()
+        add(Int)
+        remove(Int)
+        hasSufficientQuantity(Int) Bool
+    }
+
+    class InventoryComponent {
+        items: Set~GKEntity~
+        init()
+    }
+
+    class InventorySystem {
+        init()
+        addCurrencyToAll(CurrencyType, Double)
+        removeCurrencyFromAll(CurrencyType, Double)
+        getTotalAmount(CurrencyType)
+    }
+
+    InventoryComponent -- InventorySystem : components
+    InventoryComponent "1" <-- "1" Inventory : components
+    ItemComponent <.. InventorySystem

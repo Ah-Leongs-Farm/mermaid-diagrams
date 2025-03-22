@@ -1,0 +1,25 @@
+classDiagram
+    class CurrencyType {
+        <<enum>>
+        coin
+    }
+
+    class WalletComponent {
+        exchangeRate: [CurrencyType: Double]$
+        wallet: [CurrencyType: Double]
+        init()
+        getAmount(CurrencyType)
+        getAmountInBaseCurrency(CurrencyType)
+    }
+
+    class Wallet
+
+    class WalletSystem {
+        init()
+        addCurrencyToAll(CurrencyType, Double)
+        removeCurrencyFromAll(CurrencyType, Double)
+        getTotalAmount(CurrencyType)
+    }
+
+    WalletComponent -- WalletSystem : components
+    WalletComponent "1" <-- "1" Wallet : components

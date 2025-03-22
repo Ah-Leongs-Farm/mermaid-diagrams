@@ -1,0 +1,23 @@
+classDiagram
+    class CropType {
+        <<enum>>
+        potato
+        none
+    }
+
+    class CropComponent {
+        cropType: CropType
+        health: Float
+        growth: Float
+        yieldPotential: Float
+        plantedTurn: Int
+        init()
+    }
+
+    class CropSystem {
+        init()
+        plantCrop(CropType, GridComponent, Int, Int)
+        harvestCrop(GridComponent, Int, Int)
+    }
+
+    CropComponent -- CropSystem : components

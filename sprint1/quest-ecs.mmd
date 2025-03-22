@@ -1,0 +1,51 @@
+classDiagram 
+    class QuestStatus {
+        <<enum>>
+        active
+        inactive
+        completed
+    }
+
+    class QuestObjective {
+        progress: Float
+        target: Float
+        description: String
+        isCompleted: Bool
+        init()
+        setProgress(Float)
+    }
+
+    class Reward
+
+    class RewardType {
+        <<enum>>
+        xp(Int)
+        currency(CurrencyType, Int)
+        item(String, Int)
+    }
+
+    class QuestComponent {
+        progress: Float
+        isCompleted: Bool
+        init()
+    }
+
+    class Quest {
+        init()
+    }
+
+    class QuestSystem {
+        init()
+        getCurrentQuest() QuestComponent
+        getAllQuests() [QuestComponent]
+        addQuest(QuestComponent)
+        updateCurrenctQuestProgress(QuestObjective)
+        moveToNextQuest()
+    }
+
+    QuestObjective "*" -- "1" QuestComponent: objectives
+    QuestStatus "*" -- "1" QuestComponent: status
+    Reward "*" -- "1" QuestComponent: completionReward
+    QuestComponent "1" <-- "1" Quest : components
+    QuestComponent -- QuestSystem : components
+    RewardType "*" -- "1" Reward : rewards

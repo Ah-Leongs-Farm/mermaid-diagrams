@@ -1,0 +1,20 @@
+flowchart TD
+    GameManager -- owns --> GameWorld
+    GameManager -- observes --> GameRenderer
+
+    subgraph "GameRenderer"
+        RenderNodes
+        RenderSystems
+    end
+
+    subgraph "GameManager"
+        
+    end
+
+    subgraph "GameWorld"
+        Economy
+        Crops
+        Inventory
+        Quests
+        Levels
+    end
