@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant User
+    participant PlotSpriteNode
+    participant ViewController
+    participant PlotActionViewController
+    participant EventQueue
+
+    User->>PlotSpriteNode: Touch plot
+    PlotSpriteNode->>ViewController: handleTouch(node)
+    ViewController->>PlotActionViewController: Present PlotActionViewController
+    User->>PlotActionViewController: Press button to plant crop
+    PlotActionViewController->>PlotActionViewController: handleSeedPlanting(for: selectedSeed)
+    PlotActionViewController->>EventQueue: queueEvent(PlantCropEvent)
