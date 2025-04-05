@@ -41,7 +41,11 @@ classDiagram
 
   class Apple
 
-  class CropSystem
+  class CropSystem {
+    plantCrop(crop: Crop, row: Int, column: Int) Bool
+    harvestCrop(row: Int, column: Int) Crop?
+    growCrops()
+  }
 
   CropType <-- CropComponent: cropType
   Apple ..|> Crop: implements
