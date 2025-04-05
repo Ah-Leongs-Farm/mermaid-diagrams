@@ -1,0 +1,52 @@
+classDiagram
+    class GameWorld {
+        -entities: Set~GKEntity~
+        -systems: [ISystem]
+        -eventDispatcher: EventDispatcher
+        +registerEventObserver(observer: IEventObserver)
+        +queueEvent(event: GameEvent)
+        +getSystem~T~(ofType: T.Type) -> T?
+    }
+    
+    class EventDispatcher {
+        -eventQueue: Queue~GameEvent~
+        -eventObservers: [IEventObserver]
+        -context: EventContext?
+        +queueEvent(event: GameEvent)
+        +addEventObserver(observer: IEventObserver)
+        +processEvents()
+    }
+    
+    class EventContext {
+        <<interface>>
+        +queueEvent(event: GameEvent)
+        +getSystem~T~(ofType: T.Type) -> T?
+    }
+    
+    class GameEvent {
+        <<interface>>
+        +execute(in context: EventContext) -> EventData?
+    }
+    
+    class EventData {
+        +eventType: EventType
+        +data: [EventDataType: any Hashable]
+        +addData(type: EventDataType, value: any Hashable)
+    }
+    
+    class IEventObserver {
+        <<interface>>
+        +onEvent(eventData: EventData)
+    }
+
+
+    
+    %% Relationships
+    GameWorld ..|> EventContext : implements
+    GameWorld --> EventDispatcher : has
+    EventDispatcher --> EventContext : executes events in
+    EventDispatcher --> GameEvent : has
+    
+    GameEvent --> EventData : produces
+    EventDispatcher --> IEventObserver : notifies
+    
