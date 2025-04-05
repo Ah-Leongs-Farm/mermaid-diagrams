@@ -42,6 +42,8 @@ classDiagram
   class Apple
 
   class CropSystem {
+    manager: EntityManager?
+    init(for manager: EntityManager)
     plantCrop(crop: Crop, row: Int, column: Int) Bool
     harvestCrop(row: Int, column: Int) Crop?
     growCrops()
