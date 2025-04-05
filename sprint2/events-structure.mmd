@@ -1,0 +1,56 @@
+classDiagram
+    class GameWorld {
+        - entityManager: EntityManager
+        - systems: [ISystem]
+        - eventDispatcher: EventDispatcher?
+        +registerEventObserver(observer: IEventObserver)
+        +queueEvent(event: GameEvent)
+        +getSystem~T~(ofType: T.Type) -> T?
+    }
+    
+    class EventDispatcher {
+        -eventQueue: Queue~GameEvent~
+        -eventObservers: [IEventObserver]
+        -context: EventContext?
+        -queueable: EventQueueable?
+        +queueEvent(event: GameEvent)
+        +addEventObserver(observer: IEventObserver)
+        +processEvents()
+    }
+
+    class EventContext {
+        <<interface>>
+        +getSystem~T~(ofType: T.Type) -> T?
+    }
+    
+    class EventQueueable {
+        <<interface>>
+        +queueEvent(event: GameEvent)
+    }
+    
+    class GameEvent {
+        <<interface>>
+        +execute(in context: EventContext) -> EventData?
+    }
+    
+    class EventData {
+        <<interface>>
+    }
+    
+    class IEventObserver {
+        <<interface>>
+        +onEvent(eventData: EventData)
+    }
+
+    %% Relationships
+    GameWorld ..|> EventContext : implements
+    GameWorld ..|> EventQueueable : implements
+    GameWorld --> EventDispatcher : has
+    EventDispatcher --> EventContext : executes events in
+    EventDispatcher --> EventQueueable : executes events in
+    EventDispatcher --> GameEvent : has
+    
+    GameEvent --> EventData : produces
+    EventDispatcher --> IEventObserver : notifies
+
+

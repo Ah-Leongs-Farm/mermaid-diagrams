@@ -1,0 +1,18 @@
+classDiagram
+    class HarvestCropEvent {
+        - row: Int
+        - column: Int
+        - ENERGY_USAGE: Int
+        - XP_AMOUNT: Float
+        + execute(in: EventContext, queueable: EventQueueable) -> EventData?
+    }
+
+    class HarvestCropEventData {
+        + type: CropType
+        + quantity: Int
+    }
+
+    HarvestCropEvent ..|> GameEvent
+    HarvestCropEventData ..|> EventData
+    HarvestCropEvent --> HarvestCropEventData : produces
+    HarvestCropEventData
