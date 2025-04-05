@@ -1,0 +1,52 @@
+classDiagram
+  class CropType {
+    <<enumeration>>
+    potato
+    apple
+    bokChoy
+  }
+
+  class CropComponent {
+    init(cropType: CropType)
+  }
+
+  class GrowthComponent {
+    totalGrowthTurns: Int
+    currentGrowthTurn: Int
+    canHarvest: Bool
+    init(totalGrowthTurns: Int)
+  }
+
+  class HarvestedComponent {
+    init()
+  }
+
+  class HealthComponent {
+    health: Double
+    init()
+  }
+
+  class SeedComponent {
+    init()
+  }
+
+  class Crop {
+    <<protocol>>
+    seedItemType: ItemType
+    harvestedItemType: ItemType
+    components: [GKComponent]
+    createSeed()$
+    createHarvested()$
+  }
+
+  class Apple {
+
+  }
+
+  CropType <-- CropComponent: cropType
+  Apple ..|> Crop: implements
+  Apple "1" -- "0..1" HarvestedComponent
+  Apple "1" -- "0..1" SeedComponent
+  Apple "1" -- "0..1" HealthComponent
+  Apple "1" -- "0..1" GrowthComponent
+  Apple "1" -- "1" CropComponent
