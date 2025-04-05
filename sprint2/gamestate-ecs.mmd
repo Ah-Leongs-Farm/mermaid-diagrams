@@ -1,0 +1,89 @@
+classDiagram
+    class TurnComponent {
+        currentTurn: Int
+        maxTurns: Int
+        init(maxTurns: Int)
+    }
+
+    class EnergyComponent {
+        currentEnergy: Int
+        maxEnergy: Int
+        init(maxEnergy: Int)
+    }
+
+    class WalletComponent {
+        exchangeRate: [CurrencyType: Double]$
+        wallet: [CurrencyType: Double]
+        init()
+        getAmount(of currency: CurrencyType) Double?
+        getAmountInBaseCurrency(of currency: CurrencyType) Double?
+    }
+
+    class LevelComponent {
+        level: Int
+        currentXP: Float
+        thresholdXP: Float
+        init(level: Int, currentXP: Float)
+        calculateXPThreshold(for level: Int) Float
+        setLevel(_ level: Int, xp: Float)
+    }
+
+    class GameState {
+        init(maxTurns: Int, maxEnergy: Int)
+        -setUpComponents(maxTurns: Int, maxEnergy:Int)
+    }
+
+    class CurrencyType {
+        <<enumeration>>
+        coin
+    }
+
+    class TurnSystem {
+        manager: EntityManager?
+        init(for manager: EntityManager)
+        incrementTurn() Bool
+        getCurrentTurn() Int
+        getMaxTurns() Int
+        isGameOver() Bool
+    }
+
+    class EnergySystem {
+        manager: EntityManager?
+        init(for manager: EntityManager)
+        useEnergy(amount: Int) Bool
+        replenishEnergy()
+        increaseMaxEnergu(by amount: Int)
+        getCurrentEnergy() Int
+        getMaxEnergy() Int
+    }
+
+    class WalletSystem {
+        manager: EntityManager?
+        init(for manager: EntityManager) 
+        addCurrencyToAll(_ currency: CurrencyType: amount: Double)
+        removeCurrencyToAll(_ currency: CurrencyType: amount: Double)
+        getTotalAmount(of currency: CurrencyType)
+        -addCurrencyToWallet(_ walletComponent: WalletComponent, of currency: CurrencyType, amount: Double)
+        -removeCurrencyFromWallet(_ walletComponent: WalletComponent, of currency: CurrencyType, amount: Double)
+    }
+
+    class LevelSystem {
+        manager: EntityManager?
+        init(for manager: EntityManager) 
+        addXP(_ amount: Float)
+        getCurrentLevel() Int
+        getCurrentXP() Float
+        getXPForCurrentLevel() Float
+        getXPForNextLevel() Float
+        getXPProgress() Float
+    }
+
+    GameState -- TurnComponent
+    GameState -- WalletComponent
+    GameState -- LevelComponent
+    GameState -- EnergyComponent
+    WalletComponent ..> CurrencyType
+    TurnComponent "1" -- TurnSystem: turnComponent
+    EnergyComponent "1" -- EnergySystem: energyComponent
+    WalletComponent "1" -- WalletSystem: walletComponent
+    LevelComponent "1" -- LevelSystem: levelComponent

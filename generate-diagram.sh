@@ -20,7 +20,7 @@ for file in *.mmd; do
         output_file="${file%.mmd}.png"
 
         # Generate the diagram using mmdc in the background
-        mmdc -i "$file" -o "outputs/$output_file" --scale "$SCALE_FACTOR" -b transparent &
+        mmdc -i "$file" -o "outputs/$output_file" --scale "$SCALE_FACTOR" &
         pids+=("$!") # Store the process ID of the backgrounded command
         echo "Started generating diagram: $output_file (PID: $!)"
     fi
