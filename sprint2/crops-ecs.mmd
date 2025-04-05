@@ -56,7 +56,7 @@ classDiagram
   Apple "1" -- "0..1" HealthComponent
   Apple "1" -- "0..1" GrowthComponent
   Apple "1" -- "1" CropComponent
-  GrowthComponent -- CropSystem: growingCrops
   CropComponent <.. CropSystem
   SeedComponent <.. CropSystem
   HarvestedComponent <.. CropSystem
+  GrowthComponent -- CropSystem: growingCrops
