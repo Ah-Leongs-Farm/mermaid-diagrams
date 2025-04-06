@@ -1,0 +1,17 @@
+flowchart TD
+    GameManager -->|owns| GameWorld
+    GameManager -->|observes| GameRenderer
+
+    subgraph "GameRenderer"
+        RenderNodes
+        RenderManagers
+    end
+
+    subgraph "GameManager"
+    end
+
+    subgraph "GameWorld"
+        EntityManager
+        EventDispatcher
+        Systems
+    end
