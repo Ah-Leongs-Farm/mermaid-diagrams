@@ -1,0 +1,37 @@
+classDiagram
+    direction LR
+    class ItemType {
+        <<enum>>
+        bokChoyHarvested
+        bokChoySeed
+        appleSeed
+        appleHarvested
+        potatoSeed
+        potatoHarvested
+        fertiliser
+        premiumFertiliser
+        isStackable: Bool
+    }
+
+    class ItemComponent {
+        stackable: Bool
+        quantity: Int
+        init(itemType: ItemType, quantity: int)
+        add(_ amount: Int)
+        remove(_ amount: Int)
+        hasSufficientQuantity(_ amount: Int) Bool
+    }
+
+    class InventorySystem {
+        manager: EntityManager?
+        init(for manager: EntityManager)
+        addItem(type: ItmType: quantity: Int)
+        removeItem(_ item: ItemComponent)
+        hasItem(of type: ItemType) Bool
+        getAllComponents() [ItemComponent]
+        getItemsByQuantity() [ItemType: Int]
+        getNumberOfItems(of type: ItemType) Int
+    }
+
+    ItemType <-- ItemComponent: itemType
+    ItemComponent "*" -- "1" InventorySystem: items

@@ -1,0 +1,38 @@
+classDiagram
+  class MarketInformation {
+    initialItemPrices: [ItemType: Price]$
+    initialItemStocks: [ItemType: Int]$
+    sellableItems: Set~ItemType~
+  }
+
+  class SellComponent {
+    itemType: ItemType
+    init(itemType: ItemType)
+  }
+
+  class MarketSystem {
+    manager: EntityManager?
+    -itemPrices: [ItemType: Price]
+    -itemStocks: [ItemType: Int]
+    init(for manager: EntityManager)
+    getItemPrices() [ItemType: Price]
+    getItemStocks() [ItemTYpe: Int]
+    getSellQuantity(for itemType: ItemType) Int
+    getBuyPrice(for type: ItemType, currency: CurrencyType) Double?
+    getSellPrice(for type: ItemType, currency: CurrencyType) Double?
+    getBuyQuantity(for type: ItemType) Int?
+    buyItem(type: ItemType, quantity: Int) Bool
+    sellItem(type: ItemType, quantity: Int) Bool
+    resetItemStocks()
+  }
+
+  class Price {
+    buyPrice: [CurrencyType: Double]
+    sellPrice: [CurrencyType: Double]
+    buyPriceInCurrency(for currency: CurrencyType) Double?
+    sellPriceInCurrency(for currency: CurrencyType) Double?
+  }
+
+  Price <.. MarketInformation
+  Price <.. MarketSystem
+  MarketSystem -- "*" SellComponent: sellableComponents

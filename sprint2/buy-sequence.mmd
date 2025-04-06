@@ -1,0 +1,27 @@
+sequenceDiagram
+    participant U as "User"
+    participant MVC as "MarketViewController"
+    participant GM as "GameManager"
+    participant GW as "GameWorld"
+    participant ED as "EventDispatcher"
+    participant EQ as "EventQueue"
+    participant E as "BuyItemEvent"
+    participant Obs as "IGameObserver\n(MVC)"
+    
+    %% Purchase initiation
+    U->>MVC: Confirm purchase (item, quantity)
+    MVC->>GM: buyItem(item, quantity, currency)
+    GM->>GW: queueEvent(BuyItemEvent)
+    
+    %% Update cycle triggered by GameManager
+    MVC->>GM:update(deltaTiime)
+    GM->>GW: update(deltaTime)
+    GW->>ED: processEvents()
+    ED->>EQ: Dequeue BuyItemEvent
+    ED->>E: execute(in: context, queueable)
+    E-->>ED: returns BuyItemEventData
+    
+    %% Observer (MarketViewController) updates UI
+    Obs->>MVC: observe(entities)
+    MVC->>MVC: updateViews()
+

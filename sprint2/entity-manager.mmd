@@ -1,0 +1,16 @@
+classDiagram
+  class EntityManager {
+    entities: Set~GKEntity~
+    -componentsByType: [String: [EntityID: GKComponent]]
+    addEntity(_ entity: GKEntity)
+    removeEntity(_ entity: GKEntity)
+    addComponent(_ component: GKComponent, to entity: GKEntity)
+    removeComponent~T: GKComponent~(_ component: GKComponent, to entity: GKEntity)
+    getAllComponents~T: GKComponent~(ofType type: T.Type) [T]
+    getSingletonComponent~T: GKComponent~(ofType type: T.Type) T?
+    getEntities~T: GKComponent~(withComponentType type: T.Type) [GKEntity]
+    getEntities(withComponentTypes types: [CKComponent.Type]) [GKEntity]
+    getAllEntities() [GKEntity]
+    -registerComponent(_ component: GKComponent, for entity: GKEntity)
+    -unregisterComponent(_ component: GKComponent, for entity: GKEntity)
+  }
