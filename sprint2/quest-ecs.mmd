@@ -1,0 +1,56 @@
+classDiagram
+    direction TB
+
+    class QuestObjective {
+        description: String
+        criteria: QuestCriteria
+        target: Float
+        progress: Float
+        isCompleted: Bool
+    }
+    
+    class QuestCriteria {
+        <<interface>>
+        calculateValue(from eventData: EventData) -> Float
+    }
+
+    class QuestComponent {
+        title: String
+        status: QuestStatus
+        objectives: [QuestObjective]
+        order: Int
+        isCompleted: Bool
+    }
+
+    class Quest {
+        init(questComponent, rewardComponents)
+    }
+
+    class QuestSystem {
+        getCurrentQuests()
+        getAllQuests()
+        moveToNextQuest()
+        ensureTargetActiveQuestCount()
+        updateQuestProgress()
+        completeQuest()
+    }
+    
+    class IEventObserver {
+        <<interface>>
+        onEvent(EventData)
+    }
+    
+    class RewardComponent {
+        <<interface>>
+        processReward(with queuer: RewardEventQueuer)
+        accept(visitor: RewardDataRetrievalVisitor)
+    }
+    
+    QuestCriteria "1" -- "1" QuestObjective: used by
+    QuestObjective "*" -- "1" QuestComponent: contained in
+    
+    QuestComponent "1" -- "1" Quest: added to
+    RewardComponent "*" -- "1" Quest: added to
+
+    QuestSystem -- QuestComponent: manages
+    QuestSystem ..|> IEventObserver: implements

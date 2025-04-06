@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant ED as EventDispatcher
+    participant ETE as EndTurnEvent
+    participant GW as GameWorld
+    participant TS as TurnSystem
+    participant ES as EnergySystem
+    
+    ED->>ETE: execute(in: context)
+    ETE->>GW: getSystem(ofType: TurnSystem.self)
+    GW-->>ETE: turnSystem
+    ETE->>GW: getSystem(ofType: EnergySystem.self)
+    GW-->>ETE: energySystem
+    
+    ETE->>TS: incrementTurn()
+    Note over TS: Increases currentTurn<br>Checks if currentTurn <= maxTurns
+    TS-->>ETE: shouldContinue (boolean)
+    
+    ETE->>ES: replenishEnergy()
+    Note over ES: Sets currentEnergy = maxEnergy
+    
+    ETE->>ETE: Create EventData(eventType: .endTurn)
+    ETE->>ETE: addData(type: .endTurnCount, value: 1)
+    
+    alt shouldContinue is false
+        ETE->>GW: queueEvent(GameOverEvent())
+    end
+    
+    ETE-->>ED: Return EventData
+    ED->>ED: Notify observers with EventData

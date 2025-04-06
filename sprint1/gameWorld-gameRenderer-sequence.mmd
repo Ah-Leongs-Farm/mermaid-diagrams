@@ -1,0 +1,32 @@
+sequenceDiagram
+    participant GS as GameScene
+    participant GM as GameManager
+    participant GW as GameWorld
+    participant Sys as Systems
+    participant GR as GameRenderer
+    participant RS as RenderSystems
+    participant SKS as SKScene
+    
+    GS->>GS: update(currentTime)
+    GS->>GM: update(currentTime)
+    
+    GM->>GW: update(deltaTime: currentTime)
+    GW->>Sys: For each system: update(deltaTime)
+    GW->>GW: processEvents()
+    
+    GM->>GR: notify(gameWorld)
+    Note over GR: Implements IGameObserver
+    
+    GR->>GR: Find entities to render
+    Note over GR: Entities without nodes in entityNodeMap
+    
+    loop For each renderSystem
+        loop For each entity to render
+            GR->>RS: createNode(of: entity)
+            alt node created successfully
+                RS-->>GR: node (IRenderNode)
+                GR->>SKS: addChild(node.skNode)
+                GR->>GR: entityNodeMap[entity] = node
+            end
+        end
+    end

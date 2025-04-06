@@ -1,0 +1,85 @@
+classDiagram
+    direction TB
+    
+    class GameRenderer {
+        -gameScene: GameScene
+        -renderPipeline: Queue~IRenderManager~
+        -entityTileMapNodeMap: Map
+        -entitySpriteNodeMap: Map
+        +setScene(scene: GameScene)
+        +setRenderNode(entityId, node)
+        +lightUpTile(row, column)
+        +unlightAllTiles()
+        +getUIPosition(row, column)
+        +getRowAndColumn(position)
+    }
+    
+    class IRenderManager {
+        <<interface>>
+        +createNode(entity, renderer)
+        +transformNode(node, entity, renderer)
+    }
+    
+    class SpriteRenderManager {
+        -uiPositionProvider: UIPositionProvider
+        +createNodeForEntity(plot, renderer)
+        +createNodeForEntity(crop, renderer)
+    }
+    
+    class TileMapRenderManager {
+        +TileSize: CGSize
+        +createNode(entity, renderer)
+    }
+    
+    class IRenderNode {
+        <<interface>>
+        +visitTouchHandlerRegistry(registry)
+    }
+    
+    class SpriteNode {
+        +isUserInteractionEnabled: Bool
+        +visitTouchHandlerRegistry(registry)
+    }
+    
+    class TileMapNode {
+        +fill(tileGroupName)
+        +lightUpTile(row, column, color, blendFactor)
+        +removeAllLightUpTiles()
+    }
+    
+    class GameScene {
+        -gameCamera: GameCamera
+        -uiPositionProvider: UIPositionProvider
+        -interactionHandler: GridInteractionHandler
+        +setGameSceneUpdateDelegate(delegate)
+        +setUIPositionProvider(provider)
+        +setGridInteractionHandler(handler)
+    }
+    
+    class UIPositionProvider {
+        <<interface>>
+        +getUIPosition(row, column)
+        +getRowAndColumn(position)
+    }
+    
+    class IGameObserver {
+        <<interface>>
+        +observe(entities: Set~GKEntity~)
+    }
+    
+    GameRenderer ..|> UIPositionProvider
+    GameRenderer ..|> IGameObserver
+    GameRenderer --> GameScene
+    GameRenderer --> IRenderManager: manages
+    
+    IRenderManager <|.. SpriteRenderManager
+    IRenderManager <|.. TileMapRenderManager
+    
+    IRenderNode <|.. SpriteNode
+    IRenderNode <|.. TileMapNode
+    
+    GameRenderer --> IRenderNode: creates and manages
+    
+    SpriteRenderManager --> UIPositionProvider: uses
+    
+    GameScene --> UIPositionProvider: delegates to

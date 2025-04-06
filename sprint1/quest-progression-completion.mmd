@@ -1,0 +1,57 @@
+sequenceDiagram
+    participant ED as EventDispatcher
+    participant HE as HarvestCropEvent
+    participant GW as GameWorld
+    participant QS as QuestSystem
+    participant QCE as QuestCompletedEvent
+    participant RGE as RewardGrantEvent
+    participant RHF as RewardHandlerFactory
+    participant RH as Reward Handlers
+    
+    ED->>HE: execute(in: context)
+    HE->>HE: Perform harvest logic
+    HE-->>ED: EventData(type: .harvestCrop, crop data)
+    ED->>QS: onEvent(eventData)
+    
+    loop For each active quest
+        QS->>QS: updateQuestProgress(quest, eventData)
+        note over QS: Check if event matches quest criteria
+        
+        alt criteria met
+            QS->>QS: Calculate progress increment
+            QS->>QS: Update objective progress
+            
+            alt quest is now completed
+                QS->>QS: questComponent.status = .completed
+                QS->>GW: queueEvent(QuestCompletedEvent(reward))
+                GW->>ED: queueEvent(event)
+                
+                ED->>QCE: execute(in: context)
+                QCE->>GW: queueEvent(RewardGrantEvent(reward))
+                GW->>ED: queueEvent(event)
+                
+                ED->>RGE: execute(in: context)
+                
+                loop for each reward
+                    RGE->>RHF: getStrategy(for: reward.type)
+                    RHF-->>RGE: handler (XP/Currency/Item)
+                    
+                    RGE->>RH: processReward(reward, context, eventData)
+                    
+                    alt XP Reward
+                        RH->>GW: getSystem(LevelSystem)
+                        RH->>RH: levelSystem.addXP(amount)
+                    else Currency Reward
+                        RH->>GW: getSystem(WalletSystem)
+                        RH->>RH: walletSystem.addCurrency(amount)
+                    else Item Reward
+                        RH->>GW: getSystem(InventorySystem)
+                        RH->>RH: inventorySystem.createItem(type)
+                        RH->>RH: inventorySystem.addItem(item)
+                    end
+                end
+                
+                RGE-->>ED: EventData(type: .rewardGrant)
+            end
+        end
+    end
