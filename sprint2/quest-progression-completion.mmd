@@ -1,0 +1,44 @@
+sequenceDiagram
+    participant ED as EventDispatcher
+    participant HE as HarvestCropEvent
+    participant GW as GameWorld
+    participant QS as QuestSystem
+    participant QCE as QuestCompletedEvent
+    participant RC as RewardComponent
+    participant RXE as RewardXPEvent
+    
+    ED->>HE: execute(in: context)
+    HE->>HE: Perform harvest logic
+    HE-->>ED: EventData(type: .harvestCrop, crop data)
+    ED->>QS: onEvent(eventData)
+    
+    loop For each active quest
+        QS->>QS: updateQuestProgress(quest, eventData)
+        note over QS: Check if event matches quest criteria
+        
+        alt criteria met
+            QS->>QS: Calculate progress increment
+            QS->>QS: Update objective progress
+            
+            alt quest is now completed
+                QS->>QS: questComponent.status = .completed
+                QS->>GW: queueEvent(QuestCompletedEvent(reward))
+                GW->>ED: queueEvent(event)
+                
+                QS->>GW: Retrieve RewardComponents from quest entity
+                GW->>ED: queueEvent(event)
+                
+                loop For each RewardComponent
+                    QS->>RC: processReward(with: self)
+                    alt XP Reward
+                        QS->>GW: queueEvent(RewardXPEvent(amount))
+                        GW->>ED: queueEvent(event)
+                        ED->>RXE: execute(in: context)
+                        RXE->>GW: getSystem(LevelSystem)
+                        RXE->>RXE: levelSystem.addXP(amount)
+                    end
+                end
+                QS->>QS: ensureTargetActiveQuestCount()
+            end
+        end
+    end
