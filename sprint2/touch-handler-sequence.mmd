@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant ViewController
+    participant GameRenderer
+    participant IRenderNode
+
+    ViewController->>GameRenderer: get all render nodes
+    activate GameRenderer
+    GameRenderer-->>ViewController: renderNodes
+    deactivate GameRenderer
+
+    loop for each render node
+        ViewController->>ViewController: acceptIntoTouchHandlerRegistry(node: renderNode)
+        activate ViewController
+        ViewController->>IRenderNode: visitTouchHandlerRegistry(registry: self)
+        activate IRenderNode
+        IRenderNode->>ViewController: setTouchHandler(for: self)
+        deactivate IRenderNode
+        
+        deactivate ViewController
+    end
+
