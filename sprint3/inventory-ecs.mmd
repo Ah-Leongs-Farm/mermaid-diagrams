@@ -7,12 +7,14 @@ classDiagram
     class InventorySystem["InventorySystem: ISystem"] {
         manager: EntityManager?
         init(for manager: EntityManager)
-        addItem(type: ItmType: quantity: Int)
+        addItemToInventory(_ itemToAdd: Entity)
+        addItemsToInventory(_ itemsToAdd: [Entity])
+        removeItemFromInventory(_ entity: Entity)
         removeItem(_ item: ItemComponent)
-        hasItem(of type: ItemType) Bool
+        hasItem(_ item: ItemComponent) Bool
+        hasItem(of type: EntityType) Bool
         getAllComponents() [ItemComponent]
-        getItemsByQuantity() [ItemType: Int]
-        getNumberOfItems(of type: ItemType) Int
+        -isAllowedInInventory(_ entity: Entity) Bool
     }
 
     ItemComponent "*" -- "1" InventorySystem: items
