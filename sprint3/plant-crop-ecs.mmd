@@ -1,0 +1,36 @@
+sequenceDiagram
+    participant EventDispatcher
+    participant PlantCropEvent
+    participant EventContext
+    participant CropSystem
+    participant EnergySystem
+    participant LevelSystem
+    participant SoundSystem
+    participant Seed
+    participant Crop
+
+    EventDispatcher->>PlantCropEvent: execute(context, queueable)
+
+    alt Not enough energy
+        PlantCropEvent-->>Player: InsufficientEnergyErrorEventData
+    end
+
+    PlantCropEvent->>CropSystem: isOccupied(row, column)
+    CropSystem-->>PlantCropEvent: false (not occupied)
+
+    PlantCropEvent->>Seed: toCrop()
+    Seed-->>PlantCropEvent: Crop
+
+    PlantCropEvent->>EventContext: addEntity(Crop)
+    PlantCropEvent->>EventContext: removeEntity(Seed)
+
+    PlantCropEvent->>CropSystem: plantCrop(crop, row, column)
+    CropSystem-->>PlantCropEvent: true
+
+    alt Successfully Planted
+        PlantCropEvent->>EnergySystem: useEnergy(base, 1)
+        PlantCropEvent->>LevelSystem: addXP(10.0)
+        PlantCropEvent->>SoundSystem: playSoundEffect("plant-crop")
+    end
+
+    PlantCropEvent-->>EventDispatcher: PlantCropEventData
