@@ -1,0 +1,71 @@
+classDiagram
+    class GameRenderer {
+        - gameScene: GameScene
+        - renderPipeline: Queue~any IRenderManager~
+        - tileMapNode: TileMapNode
+        - entityNodeMap: [EntityID: any IRenderNode]
+        - PriorityMap: [EntityType: CGFloat]
+        + setScene(scene: GameScene?)
+        + setRenderNode(for: EntityID, node: TileMapNode)
+        + setRenderNode(for: EntityID, node: any IRenderNode)
+        + lightUpTile(at: Int, column: Int)
+        + unlightAllTiles()
+        + observe(entities: [Entity])
+    }
+
+    class IRenderManager {
+        <<protocol>>
+        + createNode(for: Entity, in: GameRenderer)
+        + transformNode(node: IRenderNode, for: Entity, in: GameRenderer)
+    }
+
+    class TileMapRenderManager {
+        + createNode(for: Entity, in: GameRenderer)
+    }
+
+    class SpriteRenderManager {
+        - uiPositionProvider: UIPositionProvider
+        + createNode(for: Entity, in: GameRenderer)
+        + transformNode(node: IRenderNode, for: Entity, in: GameRenderer)
+        + createNodeForEntity(plot: Plot, in: GameRenderer)
+        + createNodeForEntity(crop: Crop, in: GameRenderer)
+        + createNodeForEntity(seed: Seed, in: GameRenderer)
+        + createNodeForEntity(solarPanel: SolarPanel, in: GameRenderer)
+    }
+
+    class IRenderNode {
+        <<protocol>>
+        + size: CGSize
+        + visitTouchHandlerRegistry(registry: TouchHandlerRegistry)
+        + updateTexture(image: String)
+        + getSKNode(): SKNode
+    }
+
+    class TileMapNode {
+        + isRowValid(row: Int): Bool
+        + isColumnValid(column: Int): Bool
+        + fill(with: String)
+        + lightUpTile(atRow: Int, column: Int, color: UIColor, blendFactor: CGFloat)
+        + removeAllLightUpTiles()
+    }
+
+    class SpriteNode {
+        + visitTouchHandlerRegistry(registry: TouchHandlerRegistry)
+        + updateTexture(image: String)
+        + getSKNode(): SKNode
+    }
+
+    class UIPositionProvider {
+        <<protocol>>
+        + getUIPosition(row: Int, column: Int): CGPoint?
+        + getRowAndColumn(fromPosition: CGPoint): (row: Int, column: Int)?
+    }
+
+    GameRenderer --> IRenderManager
+    GameRenderer --> IRenderNode
+    GameRenderer --> UIPositionProvider
+    IRenderManager <|-- TileMapRenderManager
+    IRenderManager <|-- SpriteRenderManager
+    IRenderNode <|-- TileMapNode
+    IRenderNode <|-- SpriteNode
+
