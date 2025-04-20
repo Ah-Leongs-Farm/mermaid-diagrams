@@ -1,0 +1,90 @@
+erDiagram
+    Session {
+        UUID id PK
+    }
+    PlotPersistenceEntity {
+        UUID id PK
+    }
+    AbstractSeedPersistenceEntity {
+        UUID id PK
+    }
+    AbstractCropPersistenceEntity {
+        UUID id PK
+    }
+    SolarPanelPersistenceEntity {
+        UUID id PK
+        BOOLEAN isItem
+    }
+    GameStatePersistenceEntity {
+        UUID sessionId FK
+    }
+
+    %% Session relationships
+    Session ||--o{ PlotPersistenceEntity : "plots"
+    Session ||--o{ AbstractSeedPersistenceEntity : "seeds"
+    Session ||--o{ AbstractCropPersistenceEntity : "crops"
+    Session ||--o{ SolarPanelPersistenceEntity : "solarPanels"
+    Session ||--|| GameStatePersistenceEntity : "gameState"
+
+    %% PersistenceEntity to Component links
+    PlotPersistenceEntity ||--|| PositionPersistenceComponent : "hasPosition"
+    PlotPersistenceEntity ||--|| SoilPersistenceComponent    : "hasSoil"
+
+    GameStatePersistenceEntity ||--|| EnergyPersistenceComponent : "hasEnergy"
+    GameStatePersistenceEntity ||--|| LevelPersistenceComponent  : "hasLevel"
+    GameStatePersistenceEntity ||--|| TurnPersistenceComponent   : "hasTurn"
+    GameStatePersistenceEntity ||--|| WalletPersistenceComponent : "hasWallet"
+
+    AbstractCropPersistenceEntity ||--|| GrowthPersistenceComponent    : "hasGrowth"
+    AbstractCropPersistenceEntity ||--|| HarvestedPersistenceComponent : "hasHarvested"
+    AbstractCropPersistenceEntity ||--|| HealthPersistenceComponent    : "hasHealth"
+    AbstractCropPersistenceEntity ||--|| ItemPersistenceComponent      : "hasItem"
+    AbstractCropPersistenceEntity ||--|| PositionPersistenceComponent  : "hasPosition"
+    AbstractCropPersistenceEntity ||--|| YieldPersistenceComponent     : "hasYield"
+
+    SolarPanelPersistenceEntity ||--|| PositionPersistenceComponent : "hasPosition"
+
+    %% Component attributes
+    EnergyPersistenceComponent {
+        INT currentBaseEnergy
+        INT maxBaseEnergy
+    }
+    LevelPersistenceComponent {
+        FLOAT currentXP
+        INT level
+    }
+    TurnPersistenceComponent {
+        INT currentTurn
+        INT maxTurns
+    }
+    WalletPersistenceComponent {
+        DOUBLE coinAmount
+    }
+    PositionPersistenceComponent {
+        FLOAT x
+        FLOAT y
+    }
+    SoilPersistenceComponent {
+        BOOLEAN hasWater
+        FLOAT quality
+    }
+    GrowthPersistenceComponent {
+        FLOAT currentGrowthTurn
+        INT totalGrowthStages
+        INT totalGrowthTurns
+    }
+    HarvestedPersistenceComponent {
+        %% no fields
+    }
+    HealthPersistenceComponent {
+        DOUBLE health
+        DOUBLE maxHealth
+    }
+    ItemPersistenceComponent {
+        %% no fields
+    }
+    YieldPersistenceComponent {
+        INT maxYield
+        INT yield
+    }
+
