@@ -1,0 +1,19 @@
+sequenceDiagram
+    actor U as User
+    participant VC as PlotActionViewController
+    participant GM as GameManager
+    participant PSE as PlaceSolarPanelEvent
+    participant ED as EventDispatcher
+    participant EC as EnergyCapBoostComponent
+    participant ES as EnergySystem
+
+    U ->> VC: onSolarPanelSelected
+    VC ->> GM: placeSolarPanel(row: Int, col: Int)
+    GM ->> PSE: init()
+    PSE -->> GM: placeSolarPanelEvent
+    GM ->> ED: queueEvent(placeSolarPanelEvent)
+    ED ->> PSE: execute()
+    PSE ->> EC: 
+    EC -->> PSE: type, boost
+    PSE ->> ES: increaseMaxEnergy(type, boost)
+    PSE -->> ED: AddSolarPanelEventData()
