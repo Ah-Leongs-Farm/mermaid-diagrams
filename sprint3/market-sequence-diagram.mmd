@@ -1,0 +1,49 @@
+sequenceDiagram
+    participant EventDispatcher
+    participant BuyItemEvent
+    participant MarketSystem
+    participant WalletSystem
+    participant EntityFactoryRegistry
+    participant EventContext
+    participant InventorySystem
+    participant SoundSystem
+
+    Player->>BuyItemEvent: execute(itemType, quantity, currencyType)
+    BuyItemEvent->>MarketSystem: getBuyPrice(itemType, currencyType)
+    MarketSystem-->>BuyItemEvent: price
+    BuyItemEvent->>MarketSystem: getBuyQuantity(itemType)
+    MarketSystem-->>BuyItemEvent: stock
+
+    alt price and stock valid
+        BuyItemEvent->>WalletSystem: getTotalAmount(currencyType)
+        WalletSystem-->>BuyItemEvent: totalCurrency
+
+        alt sufficient currency
+            BuyItemEvent->>EntityFactoryRegistry: createMultiple(itemType, quantity)
+            EntityFactoryRegistry-->>BuyItemEvent: purchasedItems
+
+            BuyItemEvent->>EventContext: addEntities(purchasedItems)
+
+            BuyItemEvent->>MarketSystem: decreaseStock(itemType, quantity)
+            MarketSystem-->>BuyItemEvent: success
+
+            BuyItemEvent->>MarketSystem: addEntitiesToSellMarket(purchasedItems)
+            
+            loop for each item in purchasedItems
+                MarketSystem->>Entity: attachComponent(SellComponent)
+                MarketSystem->>EntityManager: addEntity(item)
+            end
+
+            BuyItemEvent->>SoundSystem: playSoundEffect("money")
+
+            BuyItemEvent->>InventorySystem: addItemsToInventory(purchasedItems)
+
+            BuyItemEvent->>WalletSystem: removeCurrencyFromAll(currencyType, totalCost)
+
+            BuyItemEvent-->>EventDispatcher: BuyItemEventData(itemType, quantity)
+        else insufficient currency
+            BuyItemEvent-->>EventDispatcher: nil
+        end
+    else invalid price or stock
+        BuyItemEvent-->>EventDispatcher: nil
+    end

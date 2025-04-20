@@ -1,0 +1,49 @@
+sequenceDiagram
+    participant EventDispatcher
+    participant HarvestCropEvent
+    participant EnergySystem
+    participant CropSystem
+    participant PlotOccupantSlotComponent
+    participant YieldComponent
+    participant CropFactory
+    participant EntityManager
+
+    EventDispatcher->>HarvestCropEvent: execute(row, column)
+    HarvestCropEvent->>EnergySystem: getCurrentEnergy(.base)
+    EnergySystem-->>HarvestCropEvent: currentEnergy
+
+    alt sufficient energy
+        HarvestCropEvent->>CropSystem: harvestCrop(row, column)
+        activate CropSystem
+
+        CropSystem->>PlotOccupantSlotComponent: plotOccupant
+        PlotOccupantSlotComponent-->>CropSystem: crop
+
+        CropSystem->>YieldComponent: yield
+        YieldComponent-->>CropSystem: yieldCount
+
+        CropSystem->>PlotOccupantSlotComponent: set plotOccupant = nil
+
+        CropSystem->>CropFactory: createMultiple(type, yieldCount)
+        CropFactory-->>CropSystem: crops[]
+
+        loop for each crop in crops[]
+            CropSystem->>EntityManager: addComponent(HarvestedComponent, to: crop)
+            CropSystem->>EntityManager: addEntity(crop)
+        end
+
+        CropSystem->>EntityManager: removeEntity(originalCrop)
+        deactivate CropSystem
+        CropSystem-->>HarvestCropEvent: (type, crops[])
+
+        HarvestCropEvent->>EnergySystem: useEnergy(.base, 1)
+        HarvestCropEvent->>HarvestCropEvent: levelSystem.addXP(10)
+        HarvestCropEvent->>HarvestCropEvent: inventorySystem.addItemsToInventory(crops[])
+        HarvestCropEvent->>HarvestCropEvent: marketSystem.addEntitiesToSellMarket(crops[])
+        HarvestCropEvent->>HarvestCropEvent: soundSystem.playSoundEffect()
+        HarvestCropEvent-->>EventDispatcher: HarvestCropEventData
+
+    else insufficient energy
+        HarvestCropEvent-->>EventDispatcher: InsufficientEnergyErrorEventData
+    end
+

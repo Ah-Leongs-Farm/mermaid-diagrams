@@ -7,12 +7,11 @@ sequenceDiagram
     participant LevelSystem
     participant SoundSystem
     participant Seed
-    participant Crop
 
     EventDispatcher->>PlantCropEvent: execute(context, queueable)
 
     alt Not enough energy
-        PlantCropEvent-->>Player: InsufficientEnergyErrorEventData
+        PlantCropEvent-->>EventDispatcher: InsufficientEnergyErrorEventData
     end
 
     PlantCropEvent->>CropSystem: isOccupied(row, column)

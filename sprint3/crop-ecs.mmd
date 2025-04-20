@@ -1,0 +1,25 @@
+classDiagram
+    direction LR
+
+    class EntityAdapter
+    interface PlotOccupant
+    interface Crop
+    class BokChoy {
+        +init()
+        +init(config: CropConfig)
+        -setUpComponents()
+        -setUpComponents(config: CropConfig)
+        +toCrop(): Crop
+        +visitSpriteRenderManager(manager: SpriteRenderManager, renderer: GameRenderer)
+        +save(manager: PersistenceManager, persistenceId: UUID): Bool
+        +delete(manager: PersistenceManager, persistenceId: UUID): Bool
+    }
+
+    %% protocol inheritance: Crop extends PlotOccupant %%
+    PlotOccupant <|-- Crop
+
+    %% class inheritance and realization %%
+    EntityAdapter <|-- BokChoy
+    BokChoy ..|> Crop
+    BokChoy ..|> GamePersistenceObject
+

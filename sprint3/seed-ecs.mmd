@@ -1,0 +1,21 @@
+classDiagram
+    direction LR
+
+    class EntityAdapter
+    interface Seed
+    interface GamePersistenceObject
+
+    class BokChoySeed {
+        +init(persistenceId: UUID)
+        +init()
+        -setUpComponents(persistenceId: UUID)
+        +toCrop(): Crop
+        +visitSpriteRenderManager(manager: SpriteRenderManager, renderer: GameRenderer)
+        +save(manager: PersistenceManager, persistenceId: UUID): Bool
+        +delete(manager: PersistenceManager, persistenceId: UUID): Bool
+    }
+
+    %% inheritance and realization %%
+    EntityAdapter <|-- BokChoySeed
+    BokChoySeed ..|> Seed
+    BokChoySeed ..|> GamePersistenceObject
