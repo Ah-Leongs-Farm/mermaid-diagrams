@@ -1,0 +1,79 @@
+classDiagram
+    %% === Protocols / Interfaces ===
+    class Entity {
+        <<protocol>>
+    }
+    class IGameObserver {
+        <<protocol>>
+        +observe(entities: [Entity])
+    }
+    class GamePersistenceObject {
+        <<protocol>>
+        +save(manager: PersistenceManager, id: UUID) : Bool
+        +delete(manager: PersistenceManager, id: UUID) : Bool
+    }
+    class AbstractXPersistenceManager {
+        <<protocol>>
+        +loadX()
+        +save(x, persistenceId)
+        +delete(x, persistenceId)
+    }
+    class XQuery {
+        <<protocol>>
+        +fetch(sessionId)
+        +fetchById(id)
+    }
+    class XMutation {
+        <<protocol>>
+        +upsertX(sessionId, id, x)
+        +deleteX(id)
+    }
+
+    %% === Core Classes ===
+    class X {
+        +id: UUID
+    }
+    class PersistenceManager {
+        +UUID sessionId
+        +xQuery: XQuery?
+        +xMutation: XMutation?
+        +acceptToSave(visitor: GamePersistenceObject, id: UUID)
+        +acceptToDelete(visitor: GamePersistenceObject, id: UUID)
+        +loadX()
+    }
+    class GameWorld {
+        +addEntity(entity: Entity)
+        +registerEventObserver(observer: IGameObserver)
+    }
+    class GameManager {
+        -gameWorld: GameWorld
+        -persistenceManager: PersistenceManager
+        +update(currentTime)
+        +observe()
+    }
+    class PersistenceComponent["PersistenceComponent: ComponentAdapter"] {
+        +persistenceId: UUID
+        +persistenceObject: GamePersistenceObject
+    }
+    class CoreDataXQuery
+    class CoreDataXMutation
+
+    %% === Relationships ===
+    X --|> Entity
+    X ..|> GamePersistenceObject
+
+    PersistenceManager ..|> AbstractXPersistenceManager
+    PersistenceManager ..|> IGameObserver
+
+    XQuery <|.. CoreDataXQuery
+    XMutation <|.. CoreDataXMutation
+
+    PersistenceManager --> XQuery
+    PersistenceManager --> XMutation
+
+    GameManager --> GameWorld
+    GameManager --> PersistenceManager
+
+    X --> PersistenceComponent
+    PersistenceComponent --> GamePersistenceObject
+

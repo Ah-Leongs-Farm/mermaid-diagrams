@@ -1,0 +1,52 @@
+flowchart TB
+    subgraph "Crops"
+        CropComponent
+        GrowthComponent
+        HarvestedComponent
+        HealthComponent
+        SeedComponent
+        YieldComponent
+    end
+
+    subgraph "Economy"
+        SellComponent
+        WalletComponent
+    end
+
+    subgraph "Inventory"
+        ItemComponent
+    end
+
+    subgraph "Solar Panel"
+        EnergyCapBoostComponent
+    end
+
+    subgraph "Plots"
+        PlotOccupantSlotComponent
+        PositionComponent
+    end
+
+    subgraph "Quests"
+        QuestComponent
+        RewardCurrencyComponent
+        RewardItemComponent
+        RewardXPComponent
+    end
+
+    subgraph "Game State"
+        EnergyBankComponent
+        LevelComponent
+        TurnComponent
+        UpgradeComponent
+    end
+
+    subgraph "Game World"
+        GridComponent
+        SoilComponent
+        SpriteComponent
+        RenderComponent
+    end
+
+    subgraph "Persistence"
+        PersistenceComponent
+    end

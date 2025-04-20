@@ -1,0 +1,15 @@
+sequenceDiagram
+    actor User
+    participant LC as LevelComponent
+    participant LUE as LevelUpEvent
+    participant ED as EventDispatcher
+    participant US as UpgradeSystem
+    participant UC as UpgradeComponent
+
+    User ->> LC: Triggers addXP()
+    LC ->> LUE: init()
+    LUE -->> LC: levelUpEvent
+    LC ->> ED: queueEvent(levelUpEvent)
+    ED ->> LUE: execute()
+    LUE ->> US: addUpgradePoint()
+    US ->> UC: points += 1

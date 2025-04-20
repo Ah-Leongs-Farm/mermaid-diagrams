@@ -1,0 +1,18 @@
+classDiagram
+    direction LR
+    class ItemComponent["ItemComponent: ComponentAdapter"] {
+        init()
+    }
+
+    class InventorySystem["InventorySystem: ISystem"] {
+        manager: EntityManager?
+        init(for manager: EntityManager)
+        addItem(type: ItmType: quantity: Int)
+        removeItem(_ item: ItemComponent)
+        hasItem(of type: ItemType) Bool
+        getAllComponents() [ItemComponent]
+        getItemsByQuantity() [ItemType: Int]
+        getNumberOfItems(of type: ItemType) Int
+    }
+
+    ItemComponent "*" -- "1" InventorySystem: items
