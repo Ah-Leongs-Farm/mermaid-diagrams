@@ -12,7 +12,7 @@ sequenceDiagram
     
     
     QS->>QS: updateQuestProgress(for active quests)
-    alt EventData matches Quest Criteria
+    loop For each Quest Criteria that matches EventData
         QS->>QS: Increment quest objective progress
         alt Quest becomes completed
             QS->>QS: questComponent.status = .completed

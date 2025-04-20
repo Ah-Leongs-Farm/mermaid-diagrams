@@ -1,0 +1,37 @@
+sequenceDiagram
+    actor U as User
+    participant VC as ViewController
+    participant GM as GameManager
+    participant Crop
+    participant ETE as EndTurnEvent
+    participant GW as GameWorld
+    participant ED as EventDispatcher
+    participant CS as CropSystem
+    participant SS as SoilSystem
+    participant SC as SoilComponent
+    participant GC as GrowthComponent
+    participant HC as HealthComponent
+    participant YC as YieldComponent
+
+    U ->> VC: nextDayButtonTapped()
+    VC ->> GM: nextTurn()
+    GM ->> ETE: init()
+    ETE -->> GM: endTurnEvent
+    GM ->> GW: queueEvent(endTurnEvent)
+    GW ->> ED: queueEvent()
+    ED ->> ETE: execute()
+    ETE ->> CS: updateCropStates()
+    activate CS
+    CS ->> CS: growCrop()
+    CS ->> SC: 
+    SC -->> CS: hasWater, soilQuality
+    opt hasWater
+    CS ->> GC: currentGrowthTurn += soilQuality
+    end
+    CS ->> CS: updateHealth()
+    CS ->> HC: health += healthChange
+    CS ->> CS: updateYield()
+    CS ->> YC: update yield
+    CS -->> ETE: 
+    deactivate CS
+    ETE ->> SS: degradeSoilQuality()
