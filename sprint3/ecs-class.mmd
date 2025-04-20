@@ -1,0 +1,49 @@
+classDiagram
+
+%%=== Entity & EntityAdapter ===%%
+class Entity {
+    <<protocol>>
+    +EntityID id
+    +EntityType type
+    +static EntityType type
+    +attachComponent(component: Component)
+    +detachComponent(ofType: Component.Type)
+    +getComponentByType(ofType: T.Type): T?
+    +allComponents: [Component]
+}
+
+class EntityAdapter {
+    +EntityID id
+    +EntityType type
+    +static EntityType type
+    +attachComponent(component: Component)
+    +detachComponent(ofType: Component.Type)
+    +getComponentByType(ofType: T.Type): T?
+    +allComponents: [Component]
+}
+
+Entity <|.. EntityAdapter
+GKEntity <|-- EntityAdapter
+
+%%=== Component & ComponentAdapter ===%%
+class Component {
+    <<protocol>>
+    +ownerEntity: Entity?
+}
+
+class ComponentAdapter {
+    +ownerEntity: Entity?
+}
+
+Component <|.. ComponentAdapter
+GKComponent <|-- ComponentAdapter
+
+%%=== ISystem ===%%
+class ISystem {
+    <<protocol>>
+    +manager: EntityManager?
+    +init(for: EntityManager)
+    +update(deltaTime: CGFloat)
+}
+
+

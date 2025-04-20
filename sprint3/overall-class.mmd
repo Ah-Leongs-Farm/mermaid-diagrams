@@ -1,0 +1,23 @@
+classDiagram
+
+    class ViewController
+    class GameRenderer
+    class GameManager
+    class GameWorld
+    class EntityManager
+    class EventDispatcher
+    class IGameObserver {
+        <<interface>>
+    }
+
+    ViewController "1" *-- "1" GameManager    : owns
+    ViewController "1" *-- "1" GameRenderer   : owns
+    GameManager    "1" *-- "1" GameWorld      : owns
+    GameWorld      "1" *-- "1" EntityManager  : owns
+    GameWorld      "1" *-- "1" EventDispatcher: owns
+
+    GameManager --> IGameObserver  : calls observe
+
+    ViewController ..|> IGameObserver
+    GameRenderer  ..|> IGameObserver
+
