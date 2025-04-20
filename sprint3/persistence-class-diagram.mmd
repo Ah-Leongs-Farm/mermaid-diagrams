@@ -51,7 +51,7 @@ classDiagram
         +update(currentTime)
         +observe()
     }
-    class PersistenceComponent {
+    class PersistenceComponent["PersistenceComponent: ComponentAdapter"] {
         +persistenceId: UUID
         +persistenceObject: GamePersistenceObject
     }

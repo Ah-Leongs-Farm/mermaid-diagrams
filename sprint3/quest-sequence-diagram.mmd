@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant ED as EventDispatcher
+    participant GE as GameEvent
+    participant GW as GameWorld
+    participant QS as QuestSystem
+    participant RQ as RewardEventQueuer
+    
+    ED->>GE: execute(in: context)
+    GE->>GE: Perform event logic
+    GE-->>ED: EventData (e.g. HarvestCropData)
+    ED->>QS: onEvent(eventData)
+    
+    
+    QS->>QS: updateQuestProgress(for active quests)
+    loop For each Quest Criteria that matches EventData
+        QS->>QS: Increment quest objective progress
+        alt Quest becomes completed
+            QS->>QS: questComponent.status = .completed
+            QS->>QS: completeQuest(questComponent)
+            QS->>GW: queueEvent(QuestCompletedEvent)
+            
+            note over QS: Process rewards
+            QS->>QS: getAllRewardComponents(questEntity)
+            
+            loop for each reward component
+                QS->>RQ: queueRewardEvent(component)
+            end
+            
+            QS->>QS: updateQuestStatuses() (Unlock new quests, if any)
+        end
+    end
