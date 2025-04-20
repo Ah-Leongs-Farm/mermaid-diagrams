@@ -1,0 +1,127 @@
+classDiagram
+    class TurnComponent["TurnComponent: ComponentAdapter"] {
+        currentTurn: Int
+        maxTurns: Int
+        init(maxTurns: Int)
+    }
+
+    class EnergyBankComponent["EnergyBankComponent: ComponentAdapter"] {
+        energyBank: [EnergyType: EnergyStat]
+        init(initialEnergies: [EnergyType: EnergyStat])
+        setCurrentEnergy(of type: EnergyType, to value: Int)
+        setMaxEnergy(of type: EnergyType, to value: Int)
+        getCurrentEnergy(of type: EnergyType)
+        getMaxEnergy(of type: EnergyType)
+        increaseMaxEnergy(of type: EnergyType)
+    }
+
+    class EnergyStat {
+        curr: Int
+        max: Int
+    }
+
+    class EnergyType {
+        <<enum>>
+        base
+    }
+
+    class WalletComponent["WalletComponent: ComponentAdapter"] {
+        exchangeRate: [CurrencyType: Double]$
+        wallet: [CurrencyType: Double]
+        init()
+        getAmount(of currency: CurrencyType) Double?
+        getAmountInBaseCurrency(of currency: CurrencyType) Double?
+    }
+
+    class LevelComponent["LevelComponent: ComponentAdapter"] {
+        level: Int
+        currentXP: Float
+        thresholdXP: Float
+        init(level: Int, currentXP: Float)
+        calculateXPThreshold(for level: Int) Float
+        setLevel(_ level: Int, xp: Float)
+    }
+
+    class PersistenceComponent["PersistenceComponent: ComponentAdapter"] {
+        persistenceId: UUID
+        persistenceObject: GamePersistenceObject
+        init()
+    }
+
+    class UpgradeComponent["UpgradeComponent: ComponentAdapter"] {
+        points: Int
+        init(points: Int)
+    }
+
+    class GameState["GameState: EntityAdapter"] {
+        init(maxTurns: Int, maxEnergy: Int)
+        -setUpComponents(maxTurns: Int, maxEnergy:Int)
+    }
+
+    class CurrencyType {
+        <<enumeration>>
+        coin
+    }
+
+    class TurnSystem["TurnSystem: ISystem"] {
+        manager: EntityManager?
+        init(for manager: EntityManager)
+        incrementTurn() Bool
+        getCurrentTurn() Int
+        getMaxTurns() Int
+        isGameOver() Bool
+    }
+
+    class EnergySystem["EnergySystem: ISystem"] {
+        manager: EntityManager?
+        init(for manager: EntityManager)
+        useEnergy(amount: Int) Bool
+        replenishEnergy()
+        increaseMaxEnergu(by amount: Int)
+        getCurrentEnergy() Int
+        getMaxEnergy() Int
+    }
+
+    class WalletSystem["WalletSystem: ISystem"] {
+        manager: EntityManager?
+        init(for manager: EntityManager) 
+        addCurrencyToAll(_ currency: CurrencyType: amount: Double)
+        removeCurrencyToAll(_ currency: CurrencyType: amount: Double)
+        getTotalAmount(of currency: CurrencyType)
+        -addCurrencyToWallet(_ walletComponent: WalletComponent, of currency: CurrencyType, amount: Double)
+        -removeCurrencyFromWallet(_ walletComponent: WalletComponent, of currency: CurrencyType, amount: Double)
+    }
+
+    class LevelSystem["LevelSystem: ISystem"] {
+        manager: EntityManager?
+        init(for manager: EntityManager) 
+        addXP(_ amount: Float)
+        getCurrentLevel() Int
+        getCurrentXP() Float
+        getXPForCurrentLevel() Float
+        getXPForNextLevel() Float
+        getXPProgress() Float
+    }
+
+    class UpgradeSystem["UpgradeSystem: ISystem"] {
+        manager: EntityManager?
+        init(for manager: EntityManager)
+        getUpgradePoints() Int
+        addUpgradePoint(_ pointsToAdd: Int)
+        useUpgradePoint(_ pointsToUse: Int) Bool
+    }
+
+    GameState -- TurnComponent
+    GameState -- WalletComponent
+    GameState -- LevelComponent
+    GameState -- EnergyBankComponent
+    GameState -- PersistenceComponent
+    GameState -- UpgradeComponent
+    WalletComponent ..> CurrencyType
+    TurnComponent "1" -- TurnSystem: turnComponent
+    EnergyBankComponent "1" -- EnergySystem: energyBankComponent
+    WalletComponent "1" -- WalletSystem: walletComponent
+    LevelComponent "1" -- LevelSystem: levelComponent
+    UpgradeComponent "1" -- UpgradeSystem: upgradeComponent
+    EnergyBankComponent ..> EnergyType
+    EnergyBankComponent ..> EnergyStat
