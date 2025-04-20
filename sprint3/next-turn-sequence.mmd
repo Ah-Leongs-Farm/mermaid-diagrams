@@ -1,0 +1,48 @@
+sequenceDiagram
+  actor U as User
+  participant VC as ViewController
+  participant GM as GameManager
+  participant GOVC as GameOverViewController
+  participant GW as GameWorld
+  participant ED as EventDispatcher
+  participant ETE as EndTurnEvent
+  participant TS as TurnSystem
+  participant ES as EnergySystem
+  participant CS as CropSystem
+  participant MS as MarketSystem
+
+  U ->> VC: nextDayButtonTapped()
+  VC ->> GM: getCurrentTurn()
+  GM -->> VC: currentTurn
+  VC ->> GM: getMaxTurns()
+  GM -->> VC: maxTurns
+
+  opt currentTurn == maxTurns
+  VC ->> GOVC: present
+  end
+
+  VC ->> GM: nextTurn()
+  GM ->> GW: queueEvent()
+  GW ->> ED: queueEvent(EndTurnEvent())
+  ED ->> ETE: execute()
+  ETE ->> GW: getSystem(ofType: TurnSystem.self)
+  GW -->> ETE: turnSystem
+  ETE ->> GW: getSystem(ofType: EnergySystem.self)
+  GW -->> ETE: energySystem
+  ETE ->> GW: getSystem(ofType: CropSystem.self)
+  GW -->> ETE: cropSystem
+  ETE ->> GW: getSystem(ofType: MarketSystem.self)
+  GW -->> ETE: marketSystem
+  ETE ->> TS: incrementTurn()
+  TS -->> ETE: shouldContinue
+  ETE ->> ES: replenishEnergy()
+  ETE ->> CS: growCrops()
+  ETE ->> MS: resetItemStocks()
+
+  opt shouldContinue is false
+  ETE ->> GW: queueEvent(GameOverEvent())
+  end
+
+  ETE ->> ETE: Create EndTurnEventData()
+  ETE -->> ED: eventData
+  ED ->> ED: Notify observers with event data
