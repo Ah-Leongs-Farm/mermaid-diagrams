@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant User
+    participant PlotSpriteNode
+    participant ViewController
+    participant PlotActionViewController
+    participant PlotDataProvider
+
+    User->>PlotSpriteNode: Touch plot
+    PlotSpriteNode->>ViewController: handleTouch(node)
+    ViewController->>PlotActionViewController: Present PlotActionViewController
+
+    opt User chooses to plant crop
+        User->>PlotActionViewController: Press button to plant crop
+        PlotActionViewController->>PlotDataProvider: plantCrop(row, column, cropType)
+    end
+
+    opt User chooses to place solar panel
+        User->>PlotActionViewController: Press button to place solar panel
+        PlotActionViewController->>PlotDataProvider: placeSolarPanel(row, column)
+    end
+
